@@ -16,8 +16,10 @@ server <- function(input, output, session)
 		source("methods.R")
 		v$file1=input$file1$datapath
 		v$file2=input$file2$datapath
+		v$my_sel=input$select
+		v$my_chr=input$chromosomes
 		output$plot=renderPlot({
-			my_plot=gene_distribution(v$file1,v$file2)
+			my_plot=gene_distribution(v$file1,v$file2,v$my_sel,v$my_chr)
 			print(my_plot)
 		})
 	})
