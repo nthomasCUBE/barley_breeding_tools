@@ -20,7 +20,7 @@ server <- function(input, output, session)
 		v$my_chr=input$chromosomes
 		output$plot=renderPlot({
 			my_plot=gene_distribution(v$file1,v$file2,v$my_sel,v$my_chr,v)
-			print(my_plot)
+			#print(my_plot)
 		})
 	})
 }
