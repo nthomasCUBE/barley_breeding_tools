@@ -7,7 +7,9 @@ library(xlsx)
 
 options(stringsAsFactors=FALSE)
 
-gene_distribution=function(file1,file2,my_pos,my_chr,v){
+gene_distribution=function(file1,file2,my_pos,my_chr,v,only_common){
+
+	print(c("::",1))
 
 	shinyalert("gene distribution - start","gene distribution has started",type="info")
 	
@@ -15,21 +17,45 @@ gene_distribution=function(file1,file2,my_pos,my_chr,v){
 		v$d1=read.xlsx(file1,1)
 	}
 
+	print(c("::",2))
+
 	if(is.null(v[["d2s1"]])){
 		v$d2s1=read.xlsx(file2,1)
 		v$d2s2=read.xlsx(file2,2)
 		v$d2s3=read.xlsx(file2,3)
 	}
 
+	print(c("::",3))
+
 	if(my_pos=="all"){		d2=v$d2s1 }
 	else if(my_pos=="MxS"){		d2=v$d2s2 }
 	else if(my_pos=="MxB"){		d2=v$d2s3 }
+
+	print(c("::",4))
 	
 	if(my_pos=="combined"){
 	
 		par(mfrow=c(1,2))
 
-		d2=v$d2s2
+		if(only_common=="true"){
+			print("only_shared")
+			my_shared=v$d2s2[,1]
+			my_shared=my_shared[my_shared%in%v$d2s3[,1]]
+			my_shared=unique(my_shared)
+			r1=v$d2s2
+			r1=subset(r1,r1[,1]%in%my_shared)
+			r2=v$d2s3
+			r2=subset(r2,r2[,1]%in%my_shared)
+			d2s2_cpy=r1
+			d2s3_cpy=r2
+			print(dim(r1))
+			print(dim(r2))
+		}else{
+			d2s2_cpy=v$d2s2
+			d2s3_cpy=v$d2s3
+		}
+		
+		d2=d2s2_cpy
 		d1=v$d1
 		d2[,2]=paste0("chr",d2[,2])
 		d1[,1]=paste0("i_",d1[,1])
@@ -49,7 +75,7 @@ gene_distribution=function(file1,file2,my_pos,my_chr,v){
 		X11=c(); X12=c()
 		for(x in 1:N){
 			my_s=(x-1)*c_bin; my_e=(x)*c_bin
-			X11=c(X11,(my_s+my_e)/2.0)
+			X11=c(X11,(my_s+my_e)/2.0/1000000)
 			D_s=subset(D,D[,4]>=my_s & D[,4]<=my_e)
 			if(dim(D_s)[1]>0){
 				c_dist=max(D_s[,5])-min(D_s[,5])
@@ -62,7 +88,7 @@ gene_distribution=function(file1,file2,my_pos,my_chr,v){
 		plot(X11,X12,type="o",cex=0,col="red",xlab="chromosome [Mbp]",ylab="recombination [cM]",main=u_chr)
 		legend("top",c("MxS","MxB"),col=c("red","green"),pch=20,cex=1.5)
 
-		d2=v$d2s3
+		d2=d2s3_cpy
 		d1=v$d1
 		d2[,2]=paste0("chr",d2[,2])
 		d1[,1]=paste0("i_",d1[,1])
@@ -81,7 +107,7 @@ gene_distribution=function(file1,file2,my_pos,my_chr,v){
 		X21=c(); X22=c()
 		for(x in 1:N){
 			my_s=(x-1)*c_bin; my_e=(x)*c_bin
-			X21=c(X21,(my_s+my_e)/2)
+			X21=c(X21,(my_s+my_e)/2.0/1000000)
 			D_s=subset(D,D[,4]>=my_s & D[,4]<=my_e)
 			if(dim(D_s)[1]>0){
 				c_dist=max(D_s[,5])-min(D_s[,5])
@@ -93,11 +119,13 @@ gene_distribution=function(file1,file2,my_pos,my_chr,v){
 		D2=D
 		points(X21,X22,type="o",cex=0,col="green",xaxt='n',xlab="chromosome [Mbp]",ylab="recombination [cM]",main=u_chr)
 
-		pdf(paste0(u_chr,"_plot_",".pdf"),width=4,height=4)
+		pdf(paste0(u_chr,"_",only_common,"_plot_",".pdf"),width=7,height=5)
 		par(mfrow=c(1,1))
 		plot(X11,X12,type="o",cex=0,col="red",xlab="chromosome [Mbp]",ylab="recombination [cM]",main=u_chr)
 		points(X21,X22,type="o",cex=0,col="green",xaxt='n',xlab="chromosome [Mbp]",ylab="recombination [cM]",main=u_chr)
 		dev.off()
+
+		print(c("::",5))
 
 	}else{
 		d1=v$d1
