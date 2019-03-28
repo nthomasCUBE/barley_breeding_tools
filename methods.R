@@ -9,15 +9,15 @@ options(stringsAsFactors=FALSE)
 
 gene_distribution=function(file1,file2,my_pos,my_chr,v,only_common){
 
-	print(c("::",1))
-
 	shinyalert("gene distribution - start","gene distribution has started",type="info")
+	
+	print(paste0("gene_distribution","started"))
 	
 	if(is.null(v[["d1"]])){
 		v$d1=read.xlsx(file1,1)
+		v$d1[,1]=gsub("BOPA1_|BOPA2_","",v$d1[,1])
+		v$d1[,1]=paste0("i_",v$d1[,1])
 	}
-
-	print(c("::",2))
 
 	if(is.null(v[["d2s1"]])){
 		v$d2s1=read.xlsx(file2,1)
@@ -25,18 +25,12 @@ gene_distribution=function(file1,file2,my_pos,my_chr,v,only_common){
 		v$d2s3=read.xlsx(file2,3)
 	}
 
-	print(c("::",3))
-
 	if(my_pos=="all"){		d2=v$d2s1 }
 	else if(my_pos=="MxS"){		d2=v$d2s2 }
 	else if(my_pos=="MxB"){		d2=v$d2s3 }
 
-	print(c("::",4))
-	
 	if(my_pos=="combined"){
-	
 		par(mfrow=c(1,2))
-
 		if(only_common=="true"){
 			print("only_shared")
 			my_shared=v$d2s2[,1]
@@ -48,17 +42,13 @@ gene_distribution=function(file1,file2,my_pos,my_chr,v,only_common){
 			r2=subset(r2,r2[,1]%in%my_shared)
 			d2s2_cpy=r1
 			d2s3_cpy=r2
-			print(dim(r1))
-			print(dim(r2))
 		}else{
 			d2s2_cpy=v$d2s2
 			d2s3_cpy=v$d2s3
 		}
-		
 		d2=d2s2_cpy
 		d1=v$d1
 		d2[,2]=paste0("chr",d2[,2])
-		d1[,1]=paste0("i_",d1[,1])
 		u_chr=my_chr
 		D=subset(d1,d1[,3]==u_chr)
 		E=subset(d2,d2[,2]==u_chr)
@@ -91,7 +81,6 @@ gene_distribution=function(file1,file2,my_pos,my_chr,v,only_common){
 		d2=d2s3_cpy
 		d1=v$d1
 		d2[,2]=paste0("chr",d2[,2])
-		d1[,1]=paste0("i_",d1[,1])
 		u_chr=my_chr
 		D=subset(d1,d1[,3]==u_chr)
 		E=subset(d2,d2[,2]==u_chr)
@@ -124,9 +113,6 @@ gene_distribution=function(file1,file2,my_pos,my_chr,v,only_common){
 		plot(X11,X12,type="o",cex=0,col="red",xlab="chromosome [Mbp]",ylab="recombination [cM]",main=u_chr)
 		points(X21,X22,type="o",cex=0,col="green",xaxt='n',xlab="chromosome [Mbp]",ylab="recombination [cM]",main=u_chr)
 		dev.off()
-
-		print(c("::",5))
-
 	}else{
 		d1=v$d1
 		d2[,2]=paste0("chr",d2[,2])
