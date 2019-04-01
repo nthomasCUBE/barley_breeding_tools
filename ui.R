@@ -31,7 +31,10 @@ body, label, input, button, select {
 			selectInput("select",label=h3("Select genetic Map"),choices=list("all_SNP markers"="all","MxS"="MxS","MxB Comadran"="MxB","combined"="combined"),selected=1),
 			selectInput("chromosomes",label=h3("Chromosomes"),choices=list("chr1H"="chr1H","chr2H"="chr2H","chr3H"="chr3H","chr4H"="chr4H","chr5H"="chr5","chr6H"="chr6H","chr7H"="chr7H"),selected=1),
 			radioButtons("shared", "Only shared marker:",c("true" = "true","false" = "false")),
-			actionButton("goButton", "Analyse dataset!")
+			actionButton("goButton", "Analyse dataset!")),
+		tabPanel("Chi-Square",
+			fileInput("file4","Choose Allele-distribution (e.g. Tables_dp3__map_for Robert)",multiple = TRUE, accept = c(".csv")),
+			actionButton("goButton2", "Analyse dataset!")
 		))),
 		mainPanel(
 			useShinyjs(),

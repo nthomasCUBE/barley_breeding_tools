@@ -7,6 +7,18 @@ library(xlsx)
 
 options(stringsAsFactors=FALSE)
 
+calc_allele=function(c_f,v){
+	print("calc_allele")
+	if(is.null(v[["a1"]])){
+		print("loading...")
+		v$a1=read.csv(c_f,sep=";")
+		v$a1=v$a1[-1,]
+		print(head(v$a1))
+		print("finished...")
+	}
+}
+
+
 gene_distribution=function(file1,file2,my_pos,my_chr,v,only_common){
 
 	shinyalert("gene distribution - start","gene distribution has started",type="info")

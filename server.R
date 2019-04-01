@@ -12,6 +12,13 @@ server <- function(input, output, session)
 {
 	v <- reactiveValues(species=NULL, sumo=NULL, d1=NULL, d2s1=NULL, d2s2=NULL, d2s3=NULL)
 
+	observeEvent(input$goButton2,{
+		print("goButton2")
+		source("methods.R")
+		v$file4=input$file4$datapath
+		calc_allele(v$file4,v)
+	})
+	
 	observeEvent(input$goButton,{
 		source("methods.R")
 		v$file1=input$file1$datapath
