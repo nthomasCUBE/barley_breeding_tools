@@ -12,6 +12,7 @@ server <- function(input, output, session)
 {
 	v <- reactiveValues(species=NULL, sumo=NULL, d1=NULL, d2s1=NULL, d2s2=NULL, d2s3=NULL)
 
+	
 	observeEvent(input$goButton2,{
 		print("goButton2")
 		source("methods.R")

@@ -8,14 +8,49 @@ library(xlsx)
 options(stringsAsFactors=FALSE)
 
 calc_allele=function(c_f,v){
-	print("calc_allele")
-	if(is.null(v[["a1"]])){
-		print("loading...")
+	print("calc_allele::init")
+	print(is.null(v[["a1"]]))
+	if(is.null(v[["a1"]])==TRUE){
+		print("calc_allele::loading...")
 		v$a1=read.csv(c_f,sep=";")
 		v$a1=v$a1[-1,]
-		print(head(v$a1))
-		print("finished...")
+		print("calc_allele::finished...")
 	}
+	
+	print("calc_allele::calc::init")
+
+	A=v[["a1"]]	
+
+	n_a_tot=length(A[A=="a"])
+	n_b_tot=length(A[A=="b"])
+	n_a_tot_rel=n_a_tot/(n_a_tot+n_b_tot)
+	n_b_tot_rel=n_b_tot/(n_a_tot+n_b_tot)
+	
+	df=data.frame()
+	
+	all_c_s=c(); all_ids=c(); all_cM=c(); all_bp=c(); all_chr=c();
+	for(x in 1:dim(A)[1]){
+		cur_sel=A[x,]
+		n_a=length(cur_sel[cur_sel=="a"])
+		n_b=length(cur_sel[cur_sel=="b"])
+		n_a_rel=n_a/(n_a+n_b)
+		n_b_rel=n_b/(n_a+n_b)
+		c_s=(n_a_rel-n_a_tot_rel)^2/n_a_tot_rel+(n_b_rel-n_b_tot_rel)^2/n_b_tot_rel
+
+		all_c_s=c(all_c_s,1-pchisq(c_s,1))
+		all_ids=c(all_ids,A[x,1])
+		all_cM=c(all_cM,A[x,2])
+		all_bp=c(all_bp,A[x,4])
+		all_chr=c(all_chr,A[x,3])
+	}
+	df=data.frame(all_c_s,all_ids,all_chr,all_cM,all_bp)
+	df=df[order(df[,1]),]
+	print(dim(df))
+	df=df[1:quantile(1:dim(df)[1],0.05),]
+	print(dim(df))
+	print(head(df))
+	write.xlsx(df,"chisquare.xlsx")
+	print("calc_allele::calc::terminated")
 }
 
 
